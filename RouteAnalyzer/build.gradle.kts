@@ -1,8 +1,10 @@
 plugins {
     kotlin("jvm") version "2.0.20"
+    application
+    id("com.gradleup.shadow") version "8.3.5"
 }
 
-group = "org.example"
+group = "it.polito.wa2.g01"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -18,4 +20,8 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(8)
+}
+
+application {
+    mainClass = "it.polito.wa2.g01.MainKt"
 }
