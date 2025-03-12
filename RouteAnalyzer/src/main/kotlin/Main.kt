@@ -4,19 +4,27 @@ import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.FileReader
 
+// Definiamo la classe Waypoint per rappresentare ogni punto del percorso
+data class Waypoint(val timestamp: Long, val latitude: Double, val longitude: Double)
+
 fun main() {
+    val waypoints = mutableListOf<Waypoint>()
 
     val reader = FileReader("RouteAnalyzer/src/main/resources/waypoints.csv")
     val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';'))
 
-    // Itera attraverso le righe del CSV
+    // Itera attraverso le righe del CSV e popola la lista di Waypoint
     for (csvRecord in csvParser) {
-        val timeStamp = csvRecord.get(0)
-        val longitudine = csvRecord.get(1)
-        val latitudine = csvRecord.get(2)
+        val timestamp = csvRecord.get(0).toLongOrNull()
+        val latitude = csvRecord.get(1).toDoubleOrNull()
+        val longitude= csvRecord.get(2).toDoubleOrNull()
 
-        println("timeStamp: $timeStamp, Longitudine: $longitudine, Latitudine: $latitudine")
+        if (timestamp != null && latitude != null && longitude != null) {
+            waypoints.add(Waypoint(timestamp, latitude, longitude))
+        }
     }
 
     csvParser.close()
+
+    waypoints.forEach { println(it) }
 }
