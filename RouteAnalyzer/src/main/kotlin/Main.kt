@@ -10,6 +10,7 @@ data class Waypoint(val timestamp: Long, val latitude: Double, val longitude: Do
 fun main() {
     val waypoints = mutableListOf<Waypoint>()
 
+
     val reader = FileReader("RouteAnalyzer/src/main/resources/waypoints.csv")
     val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';'))
 
