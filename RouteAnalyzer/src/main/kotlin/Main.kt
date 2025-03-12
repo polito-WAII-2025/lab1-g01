@@ -6,6 +6,7 @@ import java.io.FileReader
 
 fun main() {
 
+
     val reader = FileReader("RouteAnalyzer/src/main/resources/waypoints.csv")
     val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';'))
 
