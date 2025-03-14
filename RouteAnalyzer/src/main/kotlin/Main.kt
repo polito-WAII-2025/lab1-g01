@@ -23,6 +23,40 @@ fun mostFrequentedArea(waypoints: List<Waypoint>, areaRadiusKm: Double): Pair<Wa
     }?.let { center -> center to waypoints.count { center.distanceTo(it) <= areaRadiusKm } }
 }
 
+/*
+fun findMostFrequentedAreaGrid(waypoints: List<Waypoint>, cellSizeKm: Double): Pair<Waypoint, Int> {
+    // Constants
+    val kmPerDegreeLatitude = 111.0 // Approximate conversion factor from kilometers to degrees (latitude)
+
+    // Convert cell size in kilometers to degrees (approximate)
+    val cellSizeDegLatitude = cellSizeKm / kmPerDegreeLatitude
+    val cellSizeDegLongitude = cellSizeKm / (kmPerDegreeLatitude * Math.cos(Math.toRadians(waypoints.first().latitude))) // Adjust for longitude scale
+
+    // Create a map to track the waypoints in each grid cell
+    val grid = mutableMapOf<Pair<Int, Int>, MutableList<Waypoint>>()
+
+    // Iterate through each waypoint and assign it to the corresponding grid cell
+    for (w in waypoints) {
+        // Calculate the grid cell for the waypoint using its latitude and longitude
+        val cellX = (w.latitude / cellSizeDegLatitude).toInt()
+        val cellY = (w.longitude / cellSizeDegLongitude).toInt()
+
+        // Create a new list for the cell if it doesn't already exist, and add the waypoint
+        val cell = cellX to cellY //creates a pair (cellX, cellY)
+        grid.computeIfAbsent(cell) { mutableListOf() }.add(w)
+    }
+
+    // Find the grid cell with the most waypoints
+    val (bestCell, bestWaypoints) = grid.maxByOrNull { it.value.size } ?: return waypoints.first() to 0
+
+    // Choose the central waypoint of the most frequent cell (based on the number of waypoints)
+    val centralWaypoint = bestWaypoints[bestWaypoints.size / 2]  // Get the central waypoint in the list
+
+    // Return the central waypoint and the number of waypoints in the most populated grid cell
+    return centralWaypoint to bestWaypoints.size
+}
+*/
+
 //Un geofence è un cerchio con centro fisso e raggio noto
 fun waypointsOutsideGeofence(waypoints: List<Waypoint>, center: Waypoint, geofenceRadiusKm: Double): List<Waypoint> {
     return waypoints.filter { it.distanceTo(center) > geofenceRadiusKm }
