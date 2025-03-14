@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToString
 import java.io.File
 import java.io.FileReader
 
+
 fun maxDistanceFromStart(waypoints: List<Waypoint>): Pair<Waypoint, Double>? {
     if (waypoints.isEmpty()) return null
 
@@ -76,15 +77,31 @@ fun saveResultsToJson(
         waypointsOutsideGeofence = GeoFenceData(geofenceCenter, geofenceRadius, outsideGeofence.size, outsideGeofence)
     )
 
-    val jsonString = Json.encodeToString(output)
-    File("RouteAnalyzer/src/main/resources/output.json").writeText(jsonString)
+
+    val json = Json {
+        prettyPrint = true // Abilita la formattazione leggibile
+        prettyPrintIndent = "  " // Indentazione di 2 spazi (puoi cambiarla)
+    }
+
+    val jsonString = json.encodeToString(output)
+    File("evaluation/output.json").writeText(jsonString)
 }
 
 fun main() {
+
+    // Configuration data
+    val config = ConfigLoader.load("evaluation/custom-parameters.yml")
+
+    println("Earth Radius: ${config.earthRadiusKm} km")
+    println("Geofence Center: (${config.geofenceCenterLatitude}, ${config.geofenceCenterLongitude})")
+    println("Geofence Radius: ${config.geofenceRadiusKm} km")
+    println("Most Frequented Area Radius: ${config.mostFrequentedAreaRadiusKm ?: "Not Provided"} km")
+
+
     val waypoints = mutableListOf<Waypoint>()
 
 
-    val reader = FileReader("RouteAnalyzer/src/main/resources/waypoints.csv")
+    val reader = FileReader("evaluation/waypoints.csv")
     val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';'))
 
     // Itera attraverso le righe del CSV e popola la lista di Waypoint
