@@ -17,6 +17,9 @@ dependencies {
     implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")
+    implementation("com.uber:h3:3.7.2")
+
+
 }
 
 tasks.test {
