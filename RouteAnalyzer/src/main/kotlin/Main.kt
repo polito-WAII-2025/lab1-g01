@@ -11,12 +11,12 @@ import com.uber.h3core.H3Core
 
 
 
-fun maxDistanceFromStart(waypoints: List<Waypoint>): Pair<Waypoint, Double>? {
+fun maxDistanceFromStart(waypoints: List<Waypoint>, earthRadiusKm: Double): Pair<Waypoint, Double>? {
     if (waypoints.isEmpty()) return null
 
     val start = waypoints.first()
-    return waypoints.maxByOrNull { start.distanceTo(it) }
-        ?.let { it to start.distanceTo(it) }
+    return waypoints.maxByOrNull { start.distanceTo(it, earthRadiusKm) }
+        ?.let { it to start.distanceTo(it, earthRadiusKm) }
 }
 /*
 fun mostFrequentedArea(waypoints: List<Waypoint>, areaRadiusKm: Double): Pair<Waypoint, Int>? {
@@ -62,8 +62,8 @@ fun findMostFrequentedAreaGrid(waypoints: List<Waypoint>, cellSizeKm: Double): P
 */
 
 //Un geofence è un cerchio con centro fisso e raggio noto
-fun waypointsOutsideGeofence(waypoints: List<Waypoint>, center: Waypoint, geofenceRadiusKm: Double): List<Waypoint> {
-    return waypoints.filter { it.distanceTo(center) > geofenceRadiusKm }
+fun waypointsOutsideGeofence(waypoints: List<Waypoint>, earthRadiusKm: Double, geofenceCenter: Waypoint, geofenceRadiusKm: Double): List<Waypoint> {
+    return waypoints.filter { it.distanceTo(geofenceCenter, earthRadiusKm) > geofenceRadiusKm }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -73,11 +73,11 @@ fun saveResultsToJson(
     outsideGeofence: List<Waypoint>,
     geofenceCenter: Waypoint,
     geofenceRadius: Double,
-    areaRadius: Double
+    areaRadius: Double?
 ) {
     val output = OutputData(
         maxDistanceFromStart = maxDistance?.let { MaxDistanceData(it.first, it.second) } ?: error("No data"),
-        mostFrequentedArea = frequentArea?.let { FrequentedAreaData(it.first, areaRadius, it.second) } ?: error("No data"),
+        mostFrequentedArea = frequentArea?.let { FrequentedAreaData(it.first, areaRadius ?: 0.0, it.second) } ?: error("No data"),
         waypointsOutsideGeofence = GeoFenceData(geofenceCenter, geofenceRadius, outsideGeofence.size, outsideGeofence)
     )
 
@@ -91,8 +91,8 @@ fun saveResultsToJson(
     File("evaluation/output.json").writeText(jsonString)
 }
 
-fun calculateVelocity(waypoint1: Waypoint, waypoint2: Waypoint){
-    val segmentDistance = waypoint1.distanceTo(waypoint2)//prev.latitude, prev.longitude, curr.latitude, curr.longitude)
+fun calculateVelocity(waypoint1: Waypoint, waypoint2: Waypoint, earthRadiusKm: Double){
+    val segmentDistance = waypoint1.distanceTo(waypoint2, earthRadiusKm)//prev.latitude, prev.longitude, curr.latitude, curr.longitude)
     val timeDifference = (waypoint2.timestamp - waypoint1.timestamp) / (1000.0) // tempo in secondi
     println("distanza $segmentDistance")
     println(timeDifference)
@@ -105,19 +105,23 @@ fun mostFrequentedArea(waypoints: List<Waypoint>, resolution: Int = 9): Pair<Way
     if (waypoints.isEmpty()) return null
 
     val h3 = H3Core.newInstance()
+    // A map to store the frequency of each H3 cell (H3 index -> count)
     val cellFrequency = mutableMapOf<String, Int>()
 
-    // Conta il numero di waypoint per ogni cella H3
+    // Count the number of waypoints for each H3 cell
     for (wp in waypoints) {
+        // Convert the latitude and longitude of the waypoint into an H3 index (hexagonal cell)
         val h3Index = h3.geoToH3Address(wp.latitude, wp.longitude, resolution)
         cellFrequency[h3Index] = cellFrequency.getOrDefault(h3Index, 0) + 1
     }
 
-    // Trova la cella più frequentata
+    // Find the H3 cell with the highest count (most frequently visited)
     val mostFrequentCell = cellFrequency.maxByOrNull { it.value } ?: return null
 
-    // Converte la cella H3 in coordinate geografiche
+    // Convert the most frequent H3 index back to a geographic coordinate (center of the hexagon)
     val center = h3.h3ToGeo(mostFrequentCell.key)
+
+    // Return a Waypoint at the center of the most visited area along with the frequency count
     return Waypoint(0, center.lat, center.lng) to mostFrequentCell.value
 }
 
@@ -229,13 +233,13 @@ fun main() {
 
     csvParser.close()
 
-    val maxDistance = maxDistanceFromStart(waypoints)
+    val maxDistance = maxDistanceFromStart(waypoints, config.earthRadiusKm)
     val frequentArea = mostFrequentedArea(waypoints)  // Raggio di 0.5 km
-    val geofenceCenter = Waypoint(0, 45.0, 41.0)  // Valori esempio, da custom-parameters.yml
-    val geofenceRadius = 0.4  // Valore esempio
-    val outsideGeofence = waypointsOutsideGeofence(waypoints, geofenceCenter, geofenceRadius)
+    val geofenceCenter = Waypoint(0, config.geofenceCenterLatitude, config.geofenceCenterLongitude)
+
+    val outsideGeofence = waypointsOutsideGeofence(waypoints, config.earthRadiusKm, geofenceCenter, config.geofenceRadiusKm)
     println(frequentArea)
-    saveResultsToJson(maxDistance, frequentArea, outsideGeofence, geofenceCenter, geofenceRadius, 0.5)
+    saveResultsToJson(maxDistance, frequentArea, outsideGeofence, geofenceCenter, config.geofenceRadiusKm, areaRadius = config.mostFrequentedAreaRadiusKm)
 
 
     val intersections = detectIntersections(waypoints)
@@ -250,6 +254,6 @@ fun main() {
     //Funzione che calcola la velocità media tra 2 punti
     val prev = waypoints[1]
     val curr = waypoints[2]
-    calculateVelocity(prev,curr)
+    calculateVelocity(prev,curr, config.earthRadiusKm)
 
 }
