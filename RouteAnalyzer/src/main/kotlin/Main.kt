@@ -1,5 +1,6 @@
 package it.polito.wa2.g01
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import kotlinx.serialization.json.Json
@@ -65,6 +66,7 @@ fun waypointsOutsideGeofence(waypoints: List<Waypoint>, center: Waypoint, geofen
     return waypoints.filter { it.distanceTo(center) > geofenceRadiusKm }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 fun saveResultsToJson(
     maxDistance: Pair<Waypoint, Double>?,
     frequentArea: Pair<Waypoint, Int>?,
@@ -130,7 +132,9 @@ fun main() {
 
 
     val reader = FileReader("evaluation/waypoints.csv")
-    val csvParser = CSVParser(reader, CSVFormat.DEFAULT.withDelimiter(';'))
+    val csvParser = CSVParser(reader, CSVFormat.DEFAULT.builder()
+        .setDelimiter(';')
+        .build())
 
     // Itera attraverso le righe del CSV e popola la lista di Waypoint
     for (csvRecord in csvParser) {
