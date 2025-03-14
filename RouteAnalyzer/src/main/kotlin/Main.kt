@@ -91,13 +91,13 @@ fun saveResultsToJson(
     File("evaluation/output.json").writeText(jsonString)
 }
 
-fun calculateVelocity(waypoint1: Waypoint, waypoint2: Waypoint, earthRadiusKm: Double){
+fun calculateVelocity(waypoint1: Waypoint, waypoint2: Waypoint, earthRadiusKm: Double): Double {
     val segmentDistance = waypoint1.distanceTo(waypoint2, earthRadiusKm)//prev.latitude, prev.longitude, curr.latitude, curr.longitude)
     val timeDifference = (waypoint2.timestamp - waypoint1.timestamp) / (1000.0) // tempo in secondi
     println("distanza $segmentDistance")
     println(timeDifference)
     val velocita=if (timeDifference > 0) (segmentDistance/ (timeDifference/3600)) else 0.0
-    println("Velocita $velocita")
+    return velocita
 
 }
 
@@ -197,7 +197,13 @@ fun detectIntersections(waypoints: List<Waypoint>): List<Point> {
     return intersections
 }
 
-
+fun saveToJsonFile(intersections: List<Point>, velocity: Double, filename: String) {
+    /* TODO
+    val data = OutputData(intersections, velocity)
+    val jsonString = Json.encodeToString(data)
+    File(filename).writeText(jsonString)
+    */
+}
 
 
 
@@ -254,6 +260,6 @@ fun main() {
     //Funzione che calcola la velocità media tra 2 punti
     val prev = waypoints[1]
     val curr = waypoints[2]
-    calculateVelocity(prev,curr, config.earthRadiusKm)
-
+    val velocita = calculateVelocity(prev,curr, config.earthRadiusKm)
+    //TODO saveToJsonFile()
 }
