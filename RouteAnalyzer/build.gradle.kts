@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
     application
     id("com.gradleup.shadow") version "8.3.5"
 }
@@ -14,6 +15,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("org.apache.commons:commons-csv:1.10.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 }
 
 tasks.test {
