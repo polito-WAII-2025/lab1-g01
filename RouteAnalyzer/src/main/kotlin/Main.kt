@@ -28,6 +28,6 @@ fun main() {
     val curr = waypoints[2]
     val velocity = calculateVelocity(prev,curr, config.earthRadiusKm)
 
-    val filteredIntersections = intersections.map { Pair(it.latitude, it.longitude) }
+    val filteredIntersections = intersections.map { it.latitude to it.longitude }
     saveOutputAdvancedResultsToJson(filteredIntersections, velocity)
 }

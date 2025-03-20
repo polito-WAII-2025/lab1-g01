@@ -18,8 +18,8 @@ data class FrequentedAreaData(val centralWaypoint: Waypoint, val areaRadiusKm: D
 @Serializable
 data class GeoFenceData(val centralWaypoint: Waypoint, val areaRadiusKm: Double, val count: Int, val waypoints: List<Waypoint>)
 
-/*@Serializable
+@Serializable
 data class OutputAdvancedData(
-    val intersections: List<Pair>,
+    val intersections: List<Pair<Double, Double>>,
     val velocity: Double
-) */
+)

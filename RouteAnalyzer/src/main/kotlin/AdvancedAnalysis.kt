@@ -1,43 +1,55 @@
 package it.polito.wa2.g01
 
-object AdvancedAnalysis{
+object AdvancedAnalysis {
+
+    //Additional function 1: CALCULATE VELOCITY
+    // Function to calculate velocity between two waypoints (in km/h)
     fun calculateVelocity(wayWaypoint1: Waypoint, wayWaypoint2: Waypoint, earthRadiusKm: Double): Double {
-        val segmentDistance = wayWaypoint1.distanceTo(wayWaypoint2, earthRadiusKm)//prev.latitude, prev.longitude, curr.latitude, curr.longitude)
-        val timeDifference = (wayWaypoint2.timestamp - wayWaypoint1.timestamp) / (1000.0) // tempo in secondi
-        val velocity=if (timeDifference > 0) (segmentDistance/ (timeDifference/3600)) else 0.0
+        // Calculate the segment distance between two waypoints using the provided Earth radius
+        val segmentDistance = wayWaypoint1.distanceTo(wayWaypoint2, earthRadiusKm)
+
+        // Calculate the time difference in seconds between the two waypoints
+        val timeDifference = (wayWaypoint2.timestamp - wayWaypoint1.timestamp) / (1000.0) // time in seconds
+
+        // If time difference is positive, calculate velocity (in km/h), otherwise return 0.0 (no velocity)
+        val velocity = if (timeDifference > 0) (segmentDistance / (timeDifference / 3600)) else 0.0
         return velocity
     }
 
-    //Optional function
-    // Funzioni per il rilevamento delle intersezioni (simili a quelle precedentemente descritte)
-    //data class Waypoint(val x: Double, val y: Double)
-    // Calcola l'orientamento (collineare, orario, antiorario)
+
+
+    ///Additional function 2: CALCULATE INTERSECTION
+    // Function to calculate orientation of three points (collinear, clockwise, counterclockwise)
     fun orientation(p: Waypoint, q: Waypoint, r: Waypoint): Int {
-        val valore = (q.longitude - p.longitude) * (r.latitude - q.latitude) - (q.latitude - p.latitude) * (r.longitude - q.longitude)
+        // Calculate the cross product value to determine the orientation
+        val value = (q.longitude - p.longitude) * (r.latitude - q.latitude) - (q.latitude - p.latitude) * (r.longitude - q.longitude)
+
         return when {
-            valore == 0.0 -> 0 // collineare
-            valore > 0 -> 1 // orario
-            else -> -1 // antiorario
+            value == 0.0 -> 0  // collinear
+            value > 0 -> 1      // clockwise
+            else -> -1          // counterclockwise
         }
     }
 
-
-    // Controlla se un punto è sul segmento
+    // Function to check if point r is on the segment pq
     fun onSegment(p: Waypoint, q: Waypoint, r: Waypoint): Boolean {
-        return r.latitude in minOf(p.latitude, q.latitude)..maxOf(p.latitude, q.latitude) && r.longitude in minOf(p.longitude, q.longitude)..maxOf(p.longitude, q.longitude)
+        // Check if the point r lies on the segment pq by checking the latitude and longitude ranges
+        return r.latitude in minOf(p.latitude, q.latitude)..maxOf(p.latitude, q.latitude) &&
+                r.longitude in minOf(p.longitude, q.longitude)..maxOf(p.longitude, q.longitude)
     }
 
-    // Verifica se due segmenti si intersecano
+    // Function to check if two segments p1p2 and p3p4 intersect
     fun doIntersect(p1: Waypoint, p2: Waypoint, p3: Waypoint, p4: Waypoint): Boolean {
+        // Get the orientations of the three pairs of points
         val o1 = orientation(p1, p2, p3)
         val o2 = orientation(p1, p2, p4)
         val o3 = orientation(p3, p4, p1)
         val o4 = orientation(p3, p4, p2)
 
-        // Caso generale
+        // General case: segments intersect if orientations are different
         if (o1 != o2 && o3 != o4) return true
 
-        // Casi speciali (collineari)
+        // Special cases (collinear points)
         if (o1 == 0 && onSegment(p1, p2, p3)) return true
         if (o2 == 0 && onSegment(p1, p2, p4)) return true
         if (o3 == 0 && onSegment(p3, p4, p1)) return true
@@ -46,26 +58,35 @@ object AdvancedAnalysis{
         return false
     }
 
-    // Funzione per calcolare il punto di intersezione (approssimato)
+
+    // Function to calculate the intersection point of two line segments (approximated)
     fun calculateIntersection(p1: Waypoint, p2: Waypoint, p3: Waypoint, p4: Waypoint): Waypoint? {
+        // Calculate the denominator (to check if the lines are parallel)
         val denom = (p1.latitude - p2.latitude) * (p3.longitude - p4.longitude) - (p1.longitude - p2.longitude) * (p3.latitude - p4.latitude)
-        if (denom == 0.0) return null // Le linee sono parallele
 
-        val x = ((p1.latitude * p2.longitude - p1.longitude * p2.latitude) * (p3.latitude - p4.latitude) - (p1.latitude - p2.latitude) * (p3.latitude * p4.longitude - p3.longitude * p4.latitude)) / denom
-        val y = ((p1.latitude * p2.longitude - p1.longitude * p2.latitude) * (p3.longitude - p4.longitude) - (p1.longitude - p2.longitude) * (p3.latitude * p4.longitude - p3.longitude * p4.latitude)) / denom
+        // If denom is 0, the lines are parallel, no intersection exists
+        if (denom == 0.0) return null
 
-        return Waypoint(0, x, y)
+        // Calculate the x and y coordinates of the intersection point
+        val x = ((p1.latitude * p2.longitude - p1.longitude * p2.latitude) * (p3.latitude - p4.latitude) -
+                (p1.latitude - p2.latitude) * (p3.latitude * p4.longitude - p3.longitude * p4.latitude)) / denom
+        val y = ((p1.latitude * p2.longitude - p1.longitude * p2.latitude) * (p3.longitude - p4.longitude) -
+                (p1.longitude - p2.longitude) * (p3.latitude * p4.longitude - p3.longitude * p4.latitude)) / denom
+
+        // Return the intersection point as a Waypoint object (with x, y coordinates)
+        return Waypoint(0, x, y) // Assuming Waypoint constructor has ID as the first parameter (set to 0)
     }
 
-    // Funzione per rilevare incroci tra i percorsi
+    // Function to detect intersections between multiple waypoints
     fun detectIntersections(waypoints: List<Waypoint>): List<Waypoint> {
         val intersections = mutableListOf<Waypoint>()
 
-        // Verifica ogni coppia di segmenti
+
+        // Check every pair of segments for intersection
         for (i in 0 until waypoints.size - 1) {
-            for (j in i + 2 until waypoints.size - 1) { // Evitiamo i segmenti consecutivi
+            for (j in i + 2 until waypoints.size - 1) { // Avoid consecutive segments
                 if (doIntersect(waypoints[i], waypoints[i + 1], waypoints[j], waypoints[j + 1])) {
-                    // Calcolare il punto di intersezione (approssimato)
+                    // Calculate the intersection point (approximated)
                     val intersection = calculateIntersection(waypoints[i], waypoints[i + 1], waypoints[j], waypoints[j + 1])
                     intersection?.let {
                         intersections.add(it)
@@ -76,4 +97,3 @@ object AdvancedAnalysis{
         return intersections
     }
 }
-

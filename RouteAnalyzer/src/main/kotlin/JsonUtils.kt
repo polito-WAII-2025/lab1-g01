@@ -25,7 +25,7 @@ fun saveStandardOutputResultsToJson(
 
 @OptIn(ExperimentalSerializationApi::class)
 fun saveOutputAdvancedResultsToJson(
-    intersections: List<Waypoint>,
+    intersections: List<Pair<Double,Double>>,
     velocity: Double
 ) {
 
