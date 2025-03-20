@@ -1,0 +1,115 @@
+//MAIN PART
+/*
+       val intersections = detectIntersections(waypoints)
+       if (intersections.isEmpty()) {
+           println("Nessun incrocio trovato.")
+       } else {
+           println("Punti di intersezione:")
+           intersections.forEach { println("Latitudine: ${it.y}, Longitudine: ${it.x}") }
+       }
+
+
+       //Funzione che calcola la velocità media tra 2 punti
+       val prev = waypoints[1]
+       val curr = waypoints[2]
+       val velocita = calculateVelocity(prev,curr, config.earthRadiusKm)
+       //TODO saveToJsonFile()
+
+        */
+
+
+///----------
+
+
+fun calculateVelocity(waypoint1: Waypoint, waypoint2: Waypoint, earthRadiusKm: Double): Double {
+    val segmentDistance = waypoint1.distanceTo(waypoint2, earthRadiusKm)//prev.latitude, prev.longitude, curr.latitude, curr.longitude)
+    val timeDifference = (waypoint2.timestamp - waypoint1.timestamp) / (1000.0) // tempo in secondi
+    println("distanza $segmentDistance")
+    println(timeDifference)
+    val velocita=if (timeDifference > 0) (segmentDistance/ (timeDifference/3600)) else 0.0
+    return velocita
+
+}
+
+
+
+
+//Optional function
+// Funzioni per il rilevamento delle intersezioni (simili a quelle precedentemente descritte)
+data class Point(val x: Double, val y: Double)
+// Calcola l'orientamento (collineare, orario, antiorario)
+fun orientation(p: Point, q: Point, r: Point): Int {
+    val valore = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y)
+    return when {
+        valore == 0.0 -> 0 // collineare
+        valore > 0 -> 1 // orario
+        else -> -1 // antiorario
+    }
+}
+
+// Controlla se un punto è sul segmento
+fun onSegment(p: Point, q: Point, r: Point): Boolean {
+    return r.x in minOf(p.x, q.x)..maxOf(p.x, q.x) && r.y in minOf(p.y, q.y)..maxOf(p.y, q.y)
+}
+
+// Verifica se due segmenti si intersecano
+fun doIntersect(p1: Point, p2: Point, p3: Point, p4: Point): Boolean {
+    val o1 = orientation(p1, p2, p3)
+    val o2 = orientation(p1, p2, p4)
+    val o3 = orientation(p3, p4, p1)
+    val o4 = orientation(p3, p4, p2)
+
+    // Caso generale
+    if (o1 != o2 && o3 != o4) return true
+
+    // Casi speciali (collineari)
+    if (o1 == 0 && onSegment(p1, p2, p3)) return true
+    if (o2 == 0 && onSegment(p1, p2, p4)) return true
+    if (o3 == 0 && onSegment(p3, p4, p1)) return true
+    if (o4 == 0 && onSegment(p3, p4, p2)) return true
+
+    return false
+}
+
+// Funzione per calcolare il punto di intersezione (approssimato)
+fun calculateIntersection(p1: Point, p2: Point, p3: Point, p4: Point): Point? {
+    val denom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x)
+    if (denom == 0.0) return null // Le linee sono parallele
+
+    val x = ((p1.x * p2.y - p1.y * p2.x) * (p3.x - p4.x) - (p1.x - p2.x) * (p3.x * p4.y - p3.y * p4.x)) / denom
+    val y = ((p1.x * p2.y - p1.y * p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x * p4.y - p3.y * p4.x)) / denom
+
+    return Point(x, y)
+}
+
+// Funzione per rilevare incroci tra i percorsi
+fun detectIntersections(waypoints: List<Waypoint>): List<Point> {
+    val intersections = mutableListOf<Point>()
+
+    // Convertiamo i waypoint in punti geografici (latitudine, longitudine)
+    val points = waypoints.map { Point(it.longitude, it.latitude) }
+
+    // Verifica ogni coppia di segmenti
+    for (i in 0 until points.size - 1) {
+        for (j in i + 2 until points.size - 1) { // Evitiamo i segmenti consecutivi
+            if (doIntersect(points[i], points[i + 1], points[j], points[j + 1])) {
+                // Calcolare il punto di intersezione (approssimato)
+                val intersection = calculateIntersection(points[i], points[i + 1], points[j], points[j + 1])
+                intersection?.let {
+                    intersections.add(it)
+                }
+            }
+        }
+    }
+
+    return intersections
+}
+
+
+fun saveToJsonFile(intersections: List<Point>, velocity: Double, filename: String) {
+    /* TODO
+    val data = OutputData(intersections, velocity)
+    val jsonString = Json.encodeToString(data)
+    File(filename).writeText(jsonString)
+    */
+}
