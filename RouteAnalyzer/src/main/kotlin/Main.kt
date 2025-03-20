@@ -18,7 +18,7 @@ fun main() {
     val outsideGeofence = StandardAnalysis.waypointsOutsideGeofence(waypoints, config.earthRadiusKm, geofenceCenter, config.geofenceRadiusKm)
 
     // Saving results to JSON file
-    saveResultsToJson(maxDistance, frequentArea, outsideGeofence, geofenceCenter, config.geofenceRadiusKm, areaRadius = config.mostFrequentedAreaRadiusKm)
+    saveStandardOutputResultsToJson(maxDistance, frequentArea, outsideGeofence, geofenceCenter, config.geofenceRadiusKm, areaRadius = config.mostFrequentedAreaRadiusKm)
 
     val intersections = detectIntersections(waypoints)
 
@@ -27,4 +27,7 @@ fun main() {
     val prev = waypoints[1]
     val curr = waypoints[2]
     val velocity = calculateVelocity(prev,curr, config.earthRadiusKm)
+
+    val filteredIntersections = intersections.map { Pair(it.latitude, it.longitude) }
+    saveOutputAdvancedResultsToJson(filteredIntersections, velocity)
 }

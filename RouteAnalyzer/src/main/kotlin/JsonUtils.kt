@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 @OptIn(ExperimentalSerializationApi::class)
-fun saveResultsToJson(
+fun saveStandardOutputResultsToJson(
     maxDistance: Pair<Waypoint, Double>?,
     frequentArea: Pair<Waypoint, Int>?,
     outsideGeofence: List<Waypoint>,
@@ -21,4 +21,17 @@ fun saveResultsToJson(
     val json = Json { prettyPrint = true; prettyPrintIndent = "  " }
     val jsonString = json.encodeToString(OutputData.serializer(), output)
     File("evaluation/output.json").writeText(jsonString)
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+fun saveOutputAdvancedResultsToJson(
+    intersections: List<Waypoint>,
+    velocity: Double
+) {
+
+    val outputAdvanced = OutputAdvancedData(intersections, velocity)
+
+    val json = Json { prettyPrint = true; prettyPrintIndent = "  " }
+    val jsonString = json.encodeToString(OutputAdvancedData.serializer(), outputAdvanced)
+    File("evaluation/output_advanced.json").writeText(jsonString)
 }
