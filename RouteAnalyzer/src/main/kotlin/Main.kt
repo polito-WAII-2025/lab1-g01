@@ -1,5 +1,7 @@
 package it.polito.wa2.g01
 
+import it.polito.wa2.g01.AdvancedAnalysis.calculateVelocity
+import it.polito.wa2.g01.AdvancedAnalysis.detectIntersections
 
 
 fun main() {
@@ -18,4 +20,11 @@ fun main() {
     // Saving results to JSON file
     saveResultsToJson(maxDistance, frequentArea, outsideGeofence, geofenceCenter, config.geofenceRadiusKm, areaRadius = config.mostFrequentedAreaRadiusKm)
 
+    val intersections = detectIntersections(waypoints)
+
+
+    //Funzione che calcola la velocità media tra 2 punti
+    val prev = waypoints[1]
+    val curr = waypoints[2]
+    val velocity = calculateVelocity(prev,curr, config.earthRadiusKm)
 }
