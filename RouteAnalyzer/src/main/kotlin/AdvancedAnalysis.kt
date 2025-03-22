@@ -3,6 +3,7 @@ package it.polito.wa2.g01
 object AdvancedAnalysis {
 
     //Additional function 1: CALCULATE VELOCITY
+
     // Function to calculate velocity between two waypoints (in km/h)
     fun calculateVelocity(wayWaypoint1: Waypoint, wayWaypoint2: Waypoint, earthRadiusKm: Double): Double {
         // Calculate the segment distance between two waypoints using the provided Earth radius
@@ -19,6 +20,7 @@ object AdvancedAnalysis {
 
 
     ///Additional function 2: CALCULATE INTERSECTION
+
     // Function to calculate orientation of three points (collinear, clockwise, counterclockwise)
     fun orientation(p: Waypoint, q: Waypoint, r: Waypoint): Int {
         // Calculate the cross product value to determine the orientation

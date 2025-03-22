@@ -11,6 +11,7 @@ object StandardAnalysis {
             ?.let { it to start.distanceTo(it, earthRadiusKm) }
     }
 
+
     fun mostFrequentedArea(waypoints: List<Waypoint>, resolution: Int = 9): Pair<Waypoint, Int>? {
         if (waypoints.isEmpty()) return null
 
@@ -34,6 +35,7 @@ object StandardAnalysis {
         // Return a Waypoint at the center of the most visited area along with the frequency count
         return Waypoint(0, center.lat, center.lng) to mostFrequentCell.value
     }
+
 
     fun waypointsOutsideGeofence(
         waypoints: List<Waypoint>,

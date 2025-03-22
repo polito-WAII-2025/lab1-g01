@@ -10,11 +10,8 @@ data class CustomParameters(
     val geofenceCenterLatitude: Double,
     val geofenceCenterLongitude: Double,
     val geofenceRadiusKm: Double,
-    val mostFrequentedAreaRadiusKm: Double? = null // Optional field
-){
-    // Constructor without arguments (required by Jackson)
-    constructor() : this(0.0, 0.0, 0.0, 0.0, null)
-}
+    val mostFrequentedAreaRadiusKm: Double
+)
 
 // Singleton object to load YAML configuration
 object ConfigLoader {

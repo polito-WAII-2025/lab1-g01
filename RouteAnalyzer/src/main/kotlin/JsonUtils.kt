@@ -4,6 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import java.io.File
 
+// Standard output data
 @OptIn(ExperimentalSerializationApi::class)
 fun saveStandardOutputResultsToJson(
     maxDistance: Pair<Waypoint, Double>?,
@@ -23,9 +24,11 @@ fun saveStandardOutputResultsToJson(
     File("evaluation/output.json").writeText(jsonString)
 }
 
+
+// Advanced output data
 @OptIn(ExperimentalSerializationApi::class)
 fun saveOutputAdvancedResultsToJson(
-    intersections: List<Pair<Double,Double>>,
+    intersections: List<Pair<Double, Double>>,
     velocity: Double
 ) {
 
