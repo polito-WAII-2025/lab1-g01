@@ -6,11 +6,11 @@ import java.io.File
 
 // Define a data class that matches the YAML structure
 data class CustomParameters(
-    val earthRadiusKm: Double,
-    val geofenceCenterLatitude: Double,
-    val geofenceCenterLongitude: Double,
-    val geofenceRadiusKm: Double,
-    val mostFrequentedAreaRadiusKm: Double
+    val earthRadiusKm: Double = 0.0,
+    val geofenceCenterLatitude: Double = 0.0,
+    val geofenceCenterLongitude: Double = 0.0,
+    val geofenceRadiusKm: Double = 0.0,
+    val mostFrequentedAreaRadiusKm: Double = 1.5
 )
 
 // Singleton object to load YAML configuration
