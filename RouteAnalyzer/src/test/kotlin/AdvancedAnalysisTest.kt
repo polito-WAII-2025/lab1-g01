@@ -3,7 +3,8 @@ import it.polito.wa2.g01.Waypoint
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
- class AdvancedAnalysisTest {
+
+class AdvancedAnalysisTest {
 
   // Tests for the calculateVelocity function
   @Test
@@ -59,4 +60,5 @@ import org.junit.jupiter.api.Assertions.*
 
    assertEquals(0, intersections.size, "There should be no intersections")
   }
- }
+
+}

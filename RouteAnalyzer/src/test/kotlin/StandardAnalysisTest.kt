@@ -3,7 +3,8 @@ import it.polito.wa2.g01.Waypoint
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
- class StandardAnalysisTest {
+
+class StandardAnalysisTest {
 
   // Test the maxDistanceFromStart function
   @Test
@@ -61,5 +62,4 @@ import org.junit.jupiter.api.Assertions.*
 
    }
 
-
- }
+}
