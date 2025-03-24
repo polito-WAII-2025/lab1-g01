@@ -5,18 +5,18 @@
 To run the project in a Docker environment, follow these steps:
 
 1. Make sure that Docker is installed on your system and that the application is open.
-2. From the terminal, in the RouteAnalyzer folder, build the Docker image:
+2. Build the Docker image:
    ```sh
-   docker build -t route-analyzer .
+   docker build -t route-analyzer ./RouteAnalyzer
    ```
-3. From the terminal, in the RouteAnalyzer folder, run the container:
+3. Run the container:
    ```sh
    docker run --rm -v ${PWD}/evaluation:/app/inputFiles route-analyzer /app/inputFiles/custom-parameters.yml /app/inputFiles/waypoints.csv
    ```
 
 ## Extra Features
 
-### Velocity Calculation
+### Velocity Computation
 We have added a function to compute the average velocity between two waypoints in km/h. The calculation is based on the distance between the points and the elapsed time.
 
 ### Intersection Detection
