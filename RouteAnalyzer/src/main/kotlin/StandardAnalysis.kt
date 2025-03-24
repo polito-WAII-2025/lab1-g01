@@ -43,6 +43,7 @@ object StandardAnalysis {
         geofenceCenter: Waypoint,
         geofenceRadiusKm: Double
     ): List<Waypoint> {
-        return waypoints.filter { it.distanceTo(geofenceCenter, earthRadiusKm) > geofenceRadiusKm }
+        //togliamo i duplicati
+        return waypoints.distinct().filter { it.distanceTo(geofenceCenter, earthRadiusKm) > geofenceRadiusKm }
     }
 }

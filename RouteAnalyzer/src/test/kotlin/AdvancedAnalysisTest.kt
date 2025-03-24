@@ -6,19 +6,31 @@ import org.junit.jupiter.api.Assertions.*
 
 class AdvancedAnalysisTest {
 
-  // Tests for the calculateVelocity function
-  @Test
-  fun `test calculateVelocity with valid waypoints`() {
-   val waypoint1 = Waypoint(1000000000, 45.0, 7.0)
-   val waypoint2 = Waypoint(1000003600, 45.001, 7.001)
-   val earthRadiusKm = 6371.0
+    // Tests for the calculateVelocity function
+    @Test
+    fun `test calculateVelocity with valid waypoints`() {
+       val waypoint1 = Waypoint(1000000000, 45.0, 7.0)
+       val waypoint2 = Waypoint(1000003600, 45.001, 7.001)
+       val earthRadiusKm = 6371.0
 
-   val velocity = AdvancedAnalysis.calculateVelocity(waypoint1, waypoint2, earthRadiusKm)
+       val velocity = AdvancedAnalysis.calculateVelocity(waypoint1, waypoint2, earthRadiusKm)
 
-   assert(velocity > 0) { "The velocity must be positive" }
-  }
+       assert(velocity > 0) { "The velocity must be positive" }
+    }
 
-  @Test
+    // Test with identical waypoints (no movement)
+    @Test
+    fun `test calculateVelocity with identical waypoints`() {
+        val waypoint1 = Waypoint(1000000000, 45.0, 7.0)
+        val waypoint2 = Waypoint(1000003600, 45.0, 7.0) // Same position
+        val earthRadiusKm = 6371.0
+
+        val velocity = AdvancedAnalysis.calculateVelocity(waypoint1, waypoint2, earthRadiusKm)
+
+        assertEquals(0.0, velocity, "The velocity should be 0 if the waypoints are identical")
+    }
+
+    @Test
   fun `test calculateVelocity with same timestamp`() {
    // Equal timestamps
    val waypoint1 = Waypoint(1000003600, 45.0, 7.0)
@@ -31,8 +43,7 @@ class AdvancedAnalysisTest {
   }
 
 
-
-  // Tests for the detectIntersections function
+    // Tests for the detectIntersections function
   @Test
   fun `test detectIntersections with intersecting paths`() {
    val waypoints = listOf(
@@ -60,5 +71,15 @@ class AdvancedAnalysisTest {
 
    assertEquals(0, intersections.size, "There should be no intersections")
   }
+
+    // Test with no waypoints
+    @Test
+    fun `test detectIntersections with no waypoints`() {
+        val waypoints = emptyList<Waypoint>()
+
+        val intersections = AdvancedAnalysis.detectIntersections(waypoints)
+
+        assertEquals(0, intersections.size, "There should be no intersections with no waypoints")
+    }
 
 }
