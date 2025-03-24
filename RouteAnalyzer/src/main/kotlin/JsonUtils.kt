@@ -21,7 +21,11 @@ fun saveStandardOutputResultsToJson(
     )
     val json = Json { prettyPrint = true; prettyPrintIndent = "  " }
     val jsonString = json.encodeToString(OutputData.serializer(), output)
-    File("evaluation/output.json").writeText(jsonString)
+
+    /* Usare il percorso del container per fare riferimento a dove si vuole scrivere il file.
+       Docker si occupa di sincronizzare quella cartella con il sistema host
+    */
+    File("/app/inputFiles/output.json").writeText(jsonString)
 }
 
 
@@ -36,5 +40,9 @@ fun saveOutputAdvancedResultsToJson(
 
     val json = Json { prettyPrint = true; prettyPrintIndent = "  " }
     val jsonString = json.encodeToString(OutputAdvancedData.serializer(), outputAdvanced)
-    File("evaluation/output_advanced.json").writeText(jsonString)
+
+    /* Usare il percorso del container per fare riferimento a dove si vuole scrivere il file.
+       Docker si occupa di sincronizzare quella cartella con il sistema host
+    */
+    File("/app/inputFiles/output_advanced.json").writeText(jsonString)
 }

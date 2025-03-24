@@ -18,17 +18,22 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.0")
     implementation("com.uber:h3:3.7.2")
-
-
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
     jvmToolchain(17)
 }
 
 application {
     mainClass = "it.polito.wa2.g01.MainKt"
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "it.polito.wa2.g01.MainKt"
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

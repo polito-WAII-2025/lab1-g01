@@ -29,11 +29,20 @@ fun getH3ResolutionFromRadius(mostFrequentedAreaRadiusKm: Double): Int {
 }
 
 
-fun main() {
+fun main(args: Array<String>) {
+
+    if (args.size < 2) {
+        println("Error: Specify paths to custom-parameters.yml and waypoints.csv as arguments.")
+        return
+    }
+
+    val configFilePath = args[0]  // Il primo argomento sarà il percorso del file custom-parameters.yml
+    val waypointsFilePath = args[1]
+
     // Loading configuration data
-    val config = ConfigLoader.load("evaluation/custom-parameters.yml")
+    val config = ConfigLoader.load(configFilePath)
     // Loading waypoints from CSV file
-    val waypoints = WaypointLoader.loadWaypoints("evaluation/waypoints.csv")
+    val waypoints = WaypointLoader.loadWaypoints(waypointsFilePath)
 
     // Standard analysis
     val maxDistance = maxDistanceFromStart(waypoints, config.earthRadiusKm)
