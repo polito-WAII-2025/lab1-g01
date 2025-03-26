@@ -10,7 +10,7 @@ class ConfigTest {
     @Test
     fun `should load valid configuration from yaml`() {
 
-        val filePath = Paths.get("../evaluation/custom-parameters.yml").toString()
+        val filePath = Paths.get("src/test/resources/custom-parameters.yml").toString()
         val config = ConfigLoader.load(filePath)
         assertEquals(6371.0, config.earthRadiusKm)
         assertEquals(45.4642, config.geofenceCenterLatitude)
@@ -21,7 +21,7 @@ class ConfigTest {
 
     @Test
     fun `should throw exception if file does not exist`() {
-        val filePath = "../evaluation/custom-param.yml"
+        val filePath = "src/test/resources/custom-param.yml"
         val exception = assertThrows<IllegalArgumentException> {
             ConfigLoader.load(filePath)
         }
