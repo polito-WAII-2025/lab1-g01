@@ -13,6 +13,13 @@ data class CustomParameters(
     val mostFrequentedAreaRadiusKm: Double = 1.5
 ){
     fun validate() {
+        //requirement control
+        require(earthRadiusKm != 0.0) { "earthRadiusKm is required and missing or zero" }
+        require(geofenceRadiusKm != 0.0) { "geofenceRadiusKm is required and missing or zero" }
+        require(geofenceCenterLatitude != 0.0) { "geofenceCenterLatitude is required and missing or zero" }
+        require(geofenceCenterLongitude != 0.0) { "geofenceCenterLongitude is required and missing or zero" }
+
+        //validation
         require(earthRadiusKm > 0) { "earthRadiusKm must be greater than 0" }
         require(geofenceRadiusKm >= 0) { "geofenceRadiusKm must be non-negative" }
         require(geofenceCenterLatitude in -90.0..90.0) { "geofenceCenterLatitude must be between -90 and 90" }
