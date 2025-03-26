@@ -26,6 +26,7 @@ fun saveStandardOutputResultsToJson(
        Docker si occupa di sincronizzare quella cartella con il sistema host
     */
     File("/app/inputFiles/output.json").writeText(jsonString)
+    println("File output.json saved successfully")
 }
 
 
@@ -45,4 +46,5 @@ fun saveOutputAdvancedResultsToJson(
        Docker si occupa di sincronizzare quella cartella con il sistema host
     */
     File("/app/inputFiles/output_advanced.json").writeText(jsonString)
+    println("File output_advanced.json saved successfully")
 }

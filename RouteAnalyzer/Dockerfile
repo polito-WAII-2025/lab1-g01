@@ -1,11 +1,20 @@
-FROM gradle:8.10-jdk23 AS build
+FROM gradle:jdk17-corretto AS build
 
-# Imposta la directory di lavoro
+# Set the working directory
 WORKDIR /app
 
-COPY . .
+COPY build.gradle.kts settings.gradle.kts gradle/ ./
+
+COPY src/ ./src
 
 RUN gradle build --no-daemon
 
-# Comando per eseguire l'applicazione
-ENTRYPOINT ["java", "-jar", "build/libs/RouteAnalyzer-1.0-SNAPSHOT-all.jar"]
+#Runtime
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+COPY --from=build /app/build/libs/RouteAnalyzer-1.0-SNAPSHOT-all.jar /app/app.jar
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
