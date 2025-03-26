@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val configFilePath = args[0]  // Il primo argomento sarà il percorso del file custom-parameters.yml
+    val configFilePath = args[0]  //custom-parameters.yml path
     val waypointsFilePath = args[1]
 
     // Loading configuration data

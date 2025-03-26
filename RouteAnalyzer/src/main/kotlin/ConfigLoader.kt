@@ -11,13 +11,31 @@ data class CustomParameters(
     val geofenceCenterLongitude: Double = 0.0,
     val geofenceRadiusKm: Double = 0.0,
     val mostFrequentedAreaRadiusKm: Double = 1.5
-)
+){
+    fun validate() {
+        require(earthRadiusKm > 0) { "earthRadiusKm must be greater than 0" }
+        require(geofenceRadiusKm >= 0) { "geofenceRadiusKm must be non-negative" }
+        require(geofenceCenterLatitude in -90.0..90.0) { "geofenceCenterLatitude must be between -90 and 90" }
+        require(geofenceCenterLongitude in -180.0..180.0) { "geofenceCenterLongitude must be between -180 and 180" }
+        require(mostFrequentedAreaRadiusKm >= 0) { "mostFrequentedAreaRadiusKm must be non-negative" }
+    }
+}
 
 // Singleton object to load YAML configuration
 object ConfigLoader {
     private val objectMapper = ObjectMapper(YAMLFactory())
 
     fun load(filePath: String): CustomParameters {
-        return objectMapper.readValue(File(filePath), CustomParameters::class.java)
+        val file = File(filePath)
+        if (!file.exists()) {
+            throw IllegalArgumentException("Configuration file not found at: $filePath")
+        }
+        return try {
+            val config = objectMapper.readValue(file, CustomParameters::class.java)
+            config.validate()
+            config
+        } catch (ex: Exception) {
+            throw IllegalStateException("Error loading configuration: ${ex.message}", ex)
+        }
     }
 }
